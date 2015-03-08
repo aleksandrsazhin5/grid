@@ -1,0 +1,44 @@
+// Общие стили для всех размеров столбцов сетки
+.make-grid-columns() {
+  .col {
+	position: relative;
+	min-height: 1px;
+	float: left;
+	padding-left:  (@grid-gutter-width / 2);
+	padding-right: (@grid-gutter-width / 2);
+  }
+}
+
+// Размер столбца сетки
+.calc-grid-column(@index, @class, @type) when (@type = width) and (@index > 0) {
+  .@{class}@{index} {
+    width: percentage((@index / @grid-columns));
+  }
+}
+
+// Отступ столбца сетки
+.calc-grid-column(@index, @class, @type) when (@type = offset) {
+  .offset-@{class}@{index} {
+    margin-left: percentage((@index / @grid-columns));
+  }
+}
+
+// Бесконечного цикла в LESS
+.loop-grid-columns(@index, @class, @type) when (@index >= 0) {
+  .calc-grid-column(@index, @class, @type);
+  // Следующая итерация
+  .loop-grid-columns((@index - 1), @class, @type);
+}
+
+// Создать сетку для определенного класса
+.make-grid(@class: s, @grid-columns: 12, @grid-gutter-width: 30px) {
+  .make-grid-columns();
+  .loop-grid-columns(@grid-columns, @class, width);
+  .loop-grid-columns(@grid-columns, @class, offset);
+
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
